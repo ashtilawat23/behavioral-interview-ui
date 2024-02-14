@@ -1,5 +1,5 @@
 import React from 'react';
-import VoiceAssistant from './VoiceAssistant'; // Adjust the path based on your file structure
+import VoiceAssistant from './components/VoiceAssistant'; // Adjust the path based on your file structure
 
 const App = () => {
     return (
