@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const VoiceAssistant = () => {
+const Interview = () => {
     const [conversation, setConversation] = useState([]);
 
     const startListening = () => {
@@ -59,4 +59,4 @@ const VoiceAssistant = () => {
     );
 };
 
-export default VoiceAssistant;
+export default Interview;
