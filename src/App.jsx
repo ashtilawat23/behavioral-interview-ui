@@ -1,12 +1,16 @@
 import React from 'react';
-import Interview from './components/Interview'; // Adjust the path based on your file structure
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Interview from './components/Interview';
 import Form from './components/Form';
 
 const App = () => {
     return (
-        <div>
-            <Form />
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Form />} />
+                <Route path="/interview" element={<Interview />} />
+            </Routes>
+        </BrowserRouter>
     );
 };
 

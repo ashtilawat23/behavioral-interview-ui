@@ -15,6 +15,7 @@ import {
   Text,
   Divider
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -50,9 +51,12 @@ const Form = () => {
     });
   };
 
+  const navigate = useNavigate(); // Instantiate useNavigate hook
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    navigate('/interview'); // Navigate to /interview
   };
 
   const handleShareClick = async (e) => {
