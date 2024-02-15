@@ -1,11 +1,11 @@
 import React from 'react';
-import VoiceAssistant from './components/VoiceAssistant'; // Adjust the path based on your file structure
+import Interview from './components/Interview'; // Adjust the path based on your file structure
+import Form from './components/Form';
 
 const App = () => {
     return (
         <div>
-            <h1>My Voice Assistant</h1>
-            <VoiceAssistant />
+            <Form />
         </div>
     );
 };
