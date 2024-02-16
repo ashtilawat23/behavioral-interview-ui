@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Flex,
@@ -13,15 +13,19 @@ import {
   FormHelperText,
   Input,
   Text,
-  Divider
+  Divider,
+  FormErrorMessage,
 } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { FormDataContext } from '../context/FormDataProvider';
+
 
 const Form = () => {
-  const [formData, setFormData] = useState({
-    interview_for: '',
-    skill_to_be_assessed: [], // Changed to an array to hold multiple skills
-  });
+  // Use useContext to access formData and setFormData from FormDataContext
+  const { formData, setFormData } = useContext(FormDataContext);
+  const [isError, setIsError] = useState(false); // State to track validation error for the checkbox group
+
 
   const skillsOptions = {
     FrontendEngineer: ['React', 'CSS/HTML', 'Responsive Design', 'JavaScript'],
@@ -40,8 +44,9 @@ const Form = () => {
     setFormData({
       ...formData,
       interview_for: e.target.value,
-      skill_to_be_assessed: '', // Reset selected skill when role changes
+      skill_to_be_assessed: [],
     });
+    setIsError(false); // Reset error state when role changes
   };
 
   const handleSkillChange = (selectedSkills) => {
@@ -49,15 +54,23 @@ const Form = () => {
       ...formData,
       skill_to_be_assessed: selectedSkills,
     });
+    if (selectedSkills.length > 0) setIsError(false); // Reset error state if at least one checkbox is selected
   };
 
   const navigate = useNavigate(); // Instantiate useNavigate hook
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    navigate('/interview'); // Navigate to /interview
+    // Check if at least one skill is selected
+    if (formData.skill_to_be_assessed.length === 0) {
+      setIsError(true); // Set the error state to true if no checkbox is selected
+    } else {
+      console.log(formData);
+      navigate('/interview'); // Proceed with form submission if validation passes
+    }
   };
+
+  const toast = useToast();
 
   const handleShareClick = async (e) => {
     e.preventDefault();
@@ -74,11 +87,32 @@ const Form = () => {
         
         if (response.ok) {
           console.log("Email shared successfully");
+          toast({
+            title: "Success",
+            description: "Email shared successfully!",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
         } else {
           console.error("Failed to share email");
+          toast({
+            title: "Error",
+            description: "Failed to share email. Please try again.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
         }
       } catch (error) {
         console.error("Error sharing email:", error);
+        toast({
+          title: "Error",
+          description: "An error occurred while sharing the email. Please try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
       }
     }
   };
@@ -129,7 +163,7 @@ const Form = () => {
         </FormControl>
 
         {/* Skill Evaluation */}
-        <FormControl id="skill_to_be_assessed" mt={4} isRequired>
+        <FormControl id="skill_to_be_assessed" mt={4} as='fieldset' isInvalid={isError}>
         <FormLabel>Select the Key Skills to Evaluate</FormLabel>
         <CheckboxGroup onChange={handleSkillChange} value={formData.skill_to_be_assessed}>
           <Stack direction="column">
@@ -138,8 +172,12 @@ const Form = () => {
             ))}
           </Stack>
         </CheckboxGroup>
-        <FormHelperText>Step 2: Once a role is selected, a list of related skills will be displayed. Select the skills you want to evaluate to tailor the interview to the role's key requirements.</FormHelperText>
-      </FormControl>
+        {!isError ? (
+          <FormHelperText>Step 2: Once a role is selected, a list of related skills will be displayed. Select the skills you want to evaluate to tailor the interview to the role's key requirements.</FormHelperText>
+        ) : (
+          <FormErrorMessage>Please select at least one skill.</FormErrorMessage>
+        )}
+        </FormControl>
 
         <Button mt={4} colorScheme="blue" type="submit">
           Start Interview
